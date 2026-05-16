@@ -13,6 +13,7 @@ const progressBarFill = document.getElementById('progressBarFill');
 const timeCurrent = document.getElementById('timeCurrent');
 const timeDuration = document.getElementById('timeDuration');
 
+// --- Navigation Logic ---
 navButtons.forEach(btn => {
     btn.addEventListener('click', () => {
         const target = btn.getAttribute('data-target');
@@ -30,6 +31,7 @@ navButtons.forEach(btn => {
     });
 });
 
+// --- Player Logic ---
 player.addEventListener('click', (e) => {
     if(e.target.closest('#compactPlayBtn') || e.target.closest('#closePlayerBtn') || e.target.closest('#progressBarContainer')) {
         return;
@@ -109,6 +111,7 @@ progressBarContainer.addEventListener('click', (e) => {
     }
 });
 
+// --- Theme Settings ---
 const themeSelect = document.getElementById('themeSelect');
 
 if (themeSelect) {
@@ -131,6 +134,7 @@ function applyTheme(themeName) {
     }
 }
 
+// --- Backup ---
 document.getElementById('backupBtn').addEventListener('click', () => {
     const backupFileContent = JSON.stringify(localStorage);
     const blobPayload = new Blob([backupFileContent], { type: 'application/json' });
@@ -140,6 +144,7 @@ document.getElementById('backupBtn').addEventListener('click', () => {
     downloadAnchor.click();
 });
 
+// --- Playlist Logic ---
 const importLinks = document.getElementById('importLinks');
 const playlistContainer = document.getElementById('playlistContainer');
 
@@ -220,6 +225,7 @@ if (importLinks) {
     });
 }
 
+// --- Support Form ---
 const supportForm = document.getElementById('supportForm');
 if(supportForm) {
     supportForm.addEventListener('submit', async (e) => {
@@ -246,6 +252,7 @@ if(supportForm) {
     });
 }
 
+// --- Load Home Songs ---
 async function loadHomeSongs() {
     const homeGrid = document.getElementById('homeSongGrid');
     if(!homeGrid) return;
@@ -257,7 +264,7 @@ async function loadHomeSongs() {
         homeGrid.innerHTML = '';
         
         if(querySnapshot.empty) {
-            homeGrid.innerHTML = '<p class="text-on-surface-variant">No recently uploaded songs found.</p>';
+            homeGrid.innerHTML = '<p class="text-on-surface-variant col-span-full">No recently uploaded songs found.</p>';
             return;
         }
 
@@ -290,6 +297,98 @@ async function loadHomeSongs() {
     } catch (error) {
         console.error("Firebase error: ", error);
     }
+}
+
+// --- SEARCH LOGIC FIX ---
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+
+if(searchInput && searchResults) {
+    searchInput.addEventListener('input', async (e) => {
+        const term = e.target.value.toLowerCase().trim();
+        
+        if(term.length === 0) {
+            searchResults.innerHTML = '';
+            return;
+        }
+
+        searchResults.innerHTML = '<p class="text-on-surface-variant col-span-full pl-2">Searching...</p>';
+
+        try {
+            searchResults.innerHTML = ''; 
+            let found = false;
+
+            // Search Firebase
+            const querySnapshot = await getDocs(collection(db, "songs"));
+            querySnapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const title = (data.title || "").toLowerCase();
+                const artist = (data.artist || "").toLowerCase();
+
+                if(title.includes(term) || artist.includes(term)) {
+                    found = true;
+                    const card = document.createElement('div');
+                    card.className = 'glass-card flex items-center gap-4 p-3 rounded group hover:bg-white/20 transition-all cursor-pointer overflow-hidden border border-white/5';
+                    const coverImg = data.coverURL && data.coverURL !== 'default-cover.jpg' ? data.coverURL : 'https://via.placeholder.com/150/00A3FF/131313?text=Music';
+
+                    card.innerHTML = `
+                        <div class="h-16 w-16 flex-shrink-0 rounded overflow-hidden">
+                            <img class="h-full w-full object-cover group-hover:scale-110 transition-transform" src="${coverImg}" alt="Cover">
+                        </div>
+                        <div class="flex-1 overflow-hidden">
+                            <h4 class="font-bold text-on-surface truncate">${data.title}</h4>
+                            <p class="text-xs text-on-surface-variant truncate">${data.artist || 'Unknown'}</p>
+                        </div>
+                        <div class="pr-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="material-symbols-outlined text-primary">play_circle</span>
+                        </div>
+                    `;
+
+                    card.addEventListener('click', () => {
+                        window.loadTrack(data.title, data.audioURL, data.artist);
+                    });
+
+                    searchResults.appendChild(card);
+                }
+            });
+
+            // Search Local Playlist
+            localPlaylist.forEach((song) => {
+                if(song.name.toLowerCase().includes(term)) {
+                    found = true;
+                    const card = document.createElement('div');
+                    card.className = 'glass-card flex items-center gap-4 p-3 rounded group hover:bg-white/20 transition-all cursor-pointer overflow-hidden border border-white/5';
+                    
+                    card.innerHTML = `
+                        <div class="h-16 w-16 flex-shrink-0 rounded overflow-hidden bg-primary/20 flex items-center justify-center text-primary">
+                            <span class="material-symbols-outlined text-3xl">music_note</span>
+                        </div>
+                        <div class="flex-1 overflow-hidden">
+                            <h4 class="font-bold text-on-surface truncate">${song.name}</h4>
+                            <p class="text-xs text-on-surface-variant truncate">${song.isLocal ? 'Local Session File' : 'Cloud Stream'}</p>
+                        </div>
+                        <div class="pr-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="material-symbols-outlined text-primary">play_circle</span>
+                        </div>
+                    `;
+
+                    card.addEventListener('click', () => {
+                        window.loadTrack(song.name, song.url, song.isLocal ? 'Local Session' : 'Cloud Stream');
+                    });
+
+                    searchResults.appendChild(card);
+                }
+            });
+
+            if(!found) {
+                searchResults.innerHTML = '<p class="text-on-surface-variant col-span-full pl-2">No tracks found.</p>';
+            }
+
+        } catch (error) {
+            console.error("Search error: ", error);
+            searchResults.innerHTML = '<p class="text-red-400 col-span-full pl-2">Error searching.</p>';
+        }
+    });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
