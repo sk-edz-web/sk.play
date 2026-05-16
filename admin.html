@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>404 Not Found</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css"/>
+    <style>
+        /* Fake Nginx 404 Style */
+        #fake-404 {
+            height: 100vh; display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; font-family: Arial, sans-serif; background: #fff; color: #333;
+        }
+        #fake-404 h1 { font-size: 2.5rem; margin-bottom: 10px; cursor: default; user-select: none; }
+        #fake-404 hr { width: 100%; max-width: 500px; border: 0; border-top: 1px solid #ccc; margin-bottom: 10px; }
+        #fake-404 p { font-size: 0.9rem; }
+    </style>
+</head>
+<body class="bg-background">
+
+    <div id="fake-404">
+        <h1 id="secret-trigger">404 Not Found</h1>
+        <hr>
+        <p>nginx/1.18.0 (Ubuntu)</p>
+    </div>
+
+    <div id="admin-dashboard" class="hidden min-h-screen bg-[#131313] text-white font-sans flex flex-col md:flex-row">
+        
+        <aside class="w-full md:w-64 bg-[#201f1f] border-r border-white/10 flex flex-col p-6">
+            <h2 class="text-2xl font-bold text-[#00A3FF] mb-8">Admin Console</h2>
+            <nav class="flex flex-col gap-2" id="admin-nav">
+                <button data-target="upload" class="admin-tab active bg-[#00A3FF]/20 text-[#00A3FF] text-left px-4 py-3 rounded-lg font-bold border border-[#00A3FF]/30">Upload Track</button>
+                <button data-target="manage" class="admin-tab text-gray-400 text-left px-4 py-3 rounded-lg font-bold hover:bg-white/5 transition-all">Manage Library</button>
+                <button data-target="support" class="admin-tab text-gray-400 text-left px-4 py-3 rounded-lg font-bold hover:bg-white/5 transition-all">Support Inbox</button>
+            </nav>
+        </aside>
+
+        <main class="flex-1 p-6 md:p-10 overflow-y-auto">
+            
+            <section id="sec-upload" class="admin-section block">
+                <h3 class="text-2xl font-bold mb-6">Create New Track Card</h3>
+                <div class="glass-card p-6 rounded-xl max-w-lg flex flex-col gap-4 border border-white/10 bg-white/5">
+                    <input type="text" id="up-title" placeholder="Song Title" class="bg-black/50 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#00A3FF]">
+                    <input type="text" id="up-artist" placeholder="Artist Name" class="bg-black/50 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#00A3FF]">
+                    <input type="text" id="up-cover" placeholder="Cover Image URL (Optional)" class="bg-black/50 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#00A3FF]">
+                    <input type="text" id="up-audio" placeholder="MP3 Audio URL (Required)" class="bg-black/50 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#00A3FF]">
+                    <button id="btn-upload" class="bg-[#00A3FF] text-black font-bold py-3 rounded-lg mt-4 hover:scale-[1.02] active:scale-95 transition-transform shadow-lg shadow-[#00A3FF]/20">Publish to Firebase</button>
+                </div>
+            </section>
+
+            <section id="sec-manage" class="admin-section hidden">
+                <h3 class="text-2xl font-bold mb-6">Manage Library</h3>
+                <div id="manage-list" class="flex flex-col gap-3 max-w-3xl">
+                    </div>
+            </section>
+
+            <section id="sec-support" class="admin-section hidden">
+                <h3 class="text-2xl font-bold mb-6">Support Inbox</h3>
+                <div id="support-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script type="module" src="js/admin.js"></script>
+</body>
+</html>

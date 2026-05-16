@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>sk.player</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#00A3FF",
+                "secondary": "#00E5FF",
+                "background": "#131313",
+                "surface-container": "#201f1f",
+                "on-surface": "#e5e2e1",
+                "on-surface-variant": "#bccbb9"
+              }
+            }
+          }
+        }
+    </script>
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen relative overflow-x-hidden">
+    <div class="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-primary/10 rounded-full blur-[120px] pointer-events-none z-0 ambient-glow"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-secondary/10 rounded-full blur-[120px] pointer-events-none z-0 ambient-glow"></div>
+
+    <div id="auth-container" class="relative z-10 flex min-h-screen items-center justify-center p-4">
+        <div class="glass-card w-full max-w-md p-8 rounded-2xl space-y-6">
+            <div class="text-center">
+                <h1 class="font-display-lg text-3xl font-extrabold tracking-tight text-primary">sk.player</h1>
+                <p class="text-sm text-on-surface-variant mt-2">Login to your workspace</p>
+            </div>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-2">Email Address</label>
+                    <input type="email" id="loginEmail" required class="w-full h-12 rounded-xl px-4 text-on-surface focus:outline-none"/>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-2">Password</label>
+                    <input type="password" id="loginPassword" required class="w-full h-12 rounded-xl px-4 text-on-surface focus:outline-none"/>
+                </div>
+                <button type="submit" class="w-full h-12 bg-primary text-black font-bold rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
+                    Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="app-container" class="hidden relative z-10 min-h-screen lg:pl-72 pb-32">
+        <aside class="glass-override hidden lg:flex flex-col py-8 h-full w-72 fixed left-0 top-0 border-r border-white/5 backdrop-blur-md bg-surface-container/40 z-50">
+            <div class="font-display-lg text-2xl font-extrabold text-primary mb-8 px-6 tracking-tight">sk.player</div>
+            <nav class="flex flex-col space-y-1 flex-1">
+                <button data-target="home" class="nav-btn active-nav px-6 py-3 flex items-center gap-4 text-left border-l-4 border-primary text-primary bg-white/5 transition-all">
+                    <span class="material-symbols-outlined">home</span><span>Home</span>
+                </button>
+                <button data-target="search" class="nav-btn px-6 py-3 flex items-center gap-4 text-left text-on-surface-variant hover:bg-white/5 transition-all">
+                    <span class="material-symbols-outlined">search</span><span>Search</span>
+                </button>
+                <button data-target="playlist" class="nav-btn px-6 py-3 flex items-center gap-4 text-left text-on-surface-variant hover:bg-white/5 transition-all">
+                    <span class="material-symbols-outlined">queue_music</span><span>Playlist</span>
+                </button>
+                <button data-target="profile" class="nav-btn px-6 py-3 flex items-center gap-4 text-left text-on-surface-variant hover:bg-white/5 transition-all">
+                    <span class="material-symbols-outlined">account_circle</span><span>Profile</span>
+                </button>
+            </nav>
+        </aside>
+
+        <nav class="glass-override lg:hidden fixed bottom-0 left-0 right-0 h-20 bg-surface-container/80 backdrop-blur-2xl border-t border-white/10 flex justify-around items-center z-50 px-4 pb-safe shadow-2xl">
+            <button data-target="home" class="nav-btn active-nav flex flex-col items-center justify-center text-primary transition-all">
+                <span class="material-symbols-outlined">home</span><span class="text-[10px] font-semibold mt-1">Home</span>
+            </button>
+            <button data-target="search" class="nav-btn flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all">
+                <span class="material-symbols-outlined">search</span><span class="text-[10px] font-semibold mt-1">Search</span>
+            </button>
+            <button data-target="playlist" class="nav-btn flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all">
+                <span class="material-symbols-outlined">queue_music</span><span class="text-[10px] font-semibold mt-1">Playlist</span>
+            </button>
+            <button data-target="profile" class="nav-btn flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all">
+                <span class="material-symbols-outlined">account_circle</span><span class="text-[10px] font-semibold mt-1">Profile</span>
+            </button>
+        </nav>
+
+        <main class="p-6 md:p-8 max-w-7xl mx-auto space-y-8 pb-56">
+            <section id="section-home" class="app-section space-y-6">
+                <h2 class="text-3xl font-bold font-display-lg tracking-tight">Good evening</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="homeSongGrid"></div>
+            </section>
+
+            <section id="section-search" class="app-section hidden space-y-6">
+                <h2 class="text-3xl font-bold font-display-lg tracking-tight">Search</h2>
+                <div class="relative max-w-2xl">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                    <input type="text" id="searchInput" placeholder="Find tracks..." class="w-full h-12 rounded-full pl-12 pr-4 text-on-surface focus:outline-none backdrop-blur-md"/>
+                </div>
+            </section>
+
+            <section id="section-playlist" class="app-section hidden space-y-6">
+                <h2 class="text-3xl font-bold font-display-lg tracking-tight">Your Playlists</h2>
+                <div class="glass-card p-6 rounded-2xl max-w-xl space-y-4">
+                    <h3 class="text-lg font-semibold">Import Media (.txt or .mp3)</h3>
+                    <p class="text-sm text-on-surface-variant">Select a TXT file with links, or select local MP3 files to play in this session.</p>
+                    <input type="file" id="importLinks" accept=".txt, audio/*" multiple class="block w-full text-sm text-on-surface-variant file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-black hover:file:bg-secondary cursor-pointer"/>
+                </div>
+                <div id="playlistContainer" class="space-y-2 mt-4"></div>
+            </section>
+
+            <section id="section-profile" class="app-section hidden space-y-8">
+                <div class="glass-card p-6 rounded-2xl flex flex-col sm:flex-row items-center gap-6">
+                    <div class="w-20 h-20 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center">
+                        <span class="material-symbols-outlined text-4xl text-primary">person</span>
+                    </div>
+                    <div class="flex-1 text-center sm:text-left space-y-2">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                            <input type="text" id="profileNameInput" value="Sarathi Kannan" class="bg-transparent border-b border-transparent focus:border-primary text-xl font-bold focus:outline-none py-1 px-2 rounded"/>
+                        </div>
+                        <p class="text-sm text-on-surface-variant px-2" id="userEmailDisplay">loading...</p>
+                        <button id="logoutBtn" class="mt-2 text-xs bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-xl">Sign Out</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass-card p-6 rounded-2xl space-y-4">
+                        <h3 class="text-lg font-semibold flex items-center gap-2"><span class="material-symbols-outlined text-primary">settings</span>System Preferences</h3>
+                        <div class="flex justify-between items-center py-2 border-b border-white/5">
+                            <span class="text-sm">Theme State Engine</span>
+                            <select id="themeSelect" class="rounded-xl px-3 py-1.5 text-sm focus:outline-none">
+                                <option value="dark">Dark Midnight Glass</option>
+                                <option value="light">Light High Contrast Glass</option>
+                            </select>
+                        </div>
+                        <div class="pt-4 border-t border-white/5">
+                            <button id="backupBtn" class="text-xs bg-white/5 border border-white/10 px-4 py-2 rounded-xl text-on-surface-variant hover:text-primary transition-all flex items-center gap-2"><span class="material-symbols-outlined text-sm">download</span>Download Backup Data</button>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-2xl space-y-4">
+                        <h3 class="text-lg font-semibold flex items-center gap-2"><span class="material-symbols-outlined text-primary">contact_support</span>Developer Support</h3>
+                        <form id="supportForm" class="space-y-3">
+                            <input type="text" id="supportName" required placeholder="Your Name" class="w-full h-10 rounded-xl px-4 text-sm focus:outline-none"/>
+                            <input type="email" id="supportEmail" required placeholder="Your Email" class="w-full h-10 rounded-xl px-4 text-sm focus:outline-none"/>
+                            <textarea id="supportComment" required placeholder="How can we help?" class="w-full h-20 rounded-xl p-4 text-sm focus:outline-none resize-none"></textarea>
+                            <button type="submit" class="w-full h-10 bg-primary text-black font-bold rounded-xl hover:bg-secondary transition-all text-sm">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <div id="player" class="glass-card fixed bottom-24 lg:bottom-4 left-4 right-4 lg:left-[calc(18rem+16px)] lg:right-4 z-40 p-4 flex flex-col justify-between border-white/10 transition-all duration-500 cursor-pointer">
+            <div class="flex items-center justify-between w-full" id="playerCompactRow">
+                <div class="flex items-center gap-4 overflow-hidden">
+                    <div class="w-12 h-12 rounded-md bg-surface-container border border-white/10 flex items-center justify-center text-primary">
+                        <span class="material-symbols-outlined">music_note</span>
+                    </div>
+                    <div class="overflow-hidden">
+                        <h4 class="font-bold text-sm truncate text-primary" id="currentTitle">Ready to play</h4>
+                        <p class="text-on-surface-variant text-xs truncate" id="currentArtist">Select a track</p>
+                    </div>
+                </div>
+                <button id="compactPlayBtn" class="w-10 h-10 flex items-center justify-center rounded-full bg-primary text-black z-50 relative hover:scale-105 active:scale-95 transition-transform">
+                    <span class="material-symbols-outlined">play_arrow</span>
+                </button>
+            </div>
+
+            <div id="playerExpandedContent" class="hidden w-full flex-1 flex flex-col items-center justify-center max-w-md mx-auto space-y-8 pt-12">
+                <div class="w-full aspect-square max-h-[320px] rounded-2xl bg-surface-container border border-white/10 flex items-center justify-center shadow-xl">
+                    <span class="material-symbols-outlined text-7xl text-primary">music_note</span>
+                </div>
+                <div class="w-full text-center">
+                    <h2 class="text-2xl font-bold text-on-surface truncate" id="expandedTitle">Ready to play</h2>
+                    <p class="text-on-surface-variant text-sm mt-1" id="expandedArtist">Select a track</p>
+                </div>
+                <div class="w-full space-y-2">
+                    <div class="relative h-1 w-full bg-white/10 rounded-full cursor-pointer" id="progressBarContainer">
+                        <div id="progressBarFill" class="absolute h-full bg-primary rounded-full w-0 shadow-[0_0_10px_rgba(0,163,255,0.8)]"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-on-surface-variant font-mono">
+                        <span id="timeCurrent">0:00</span>
+                        <span id="timeDuration">0:00</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center gap-8 w-full">
+                    <button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined text-3xl">skip_previous</span></button>
+                    <button id="expandedPlayBtn" class="w-16 h-16 bg-primary text-black rounded-full flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all"><span class="material-symbols-outlined text-4xl">play_arrow</span></button>
+                    <button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined text-3xl">skip_next</span></button>
+                </div>
+                <button id="closePlayerBtn" class="text-xs bg-white/5 border border-white/10 px-4 py-2 rounded-xl text-on-surface-variant flex items-center gap-2 mt-4 z-50 relative hover:text-white transition-all"><span class="material-symbols-outlined text-sm">keyboard_arrow_down</span>Minimize</button>
+            </div>
+        </div>
+        <audio id="audioElement"></audio>
+    </div>
+
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
